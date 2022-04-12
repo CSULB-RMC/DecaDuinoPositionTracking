@@ -43,6 +43,7 @@ void setup()
     Serial.println("decaduino init failed");
     while(1) { digitalWrite(13, HIGH); delay(50); digitalWrite(13, LOW); delay(50); }
   }
+  //while(1) { digitalWrite(13, HIGH); delay(50); digitalWrite(13, LOW); delay(50); }
 
   // Set RX buffer
   decaduino.setRxBuffer(rxData, &rxLen);

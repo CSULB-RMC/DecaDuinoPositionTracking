@@ -67,7 +67,7 @@ void setup()
   xa = 0;
   ya = 0;
   //based on the equation, xa ya and yb might always have to be 0)
-  xb = 1.68;
+  xb = .2;
   yb = 0;
   distance1 = 0;
   distance2 = 0;
@@ -149,13 +149,17 @@ void loop()
       t2 = decaduino.decodeUint40(&rxData[1]);
       t3 = decaduino.decodeUint40(&rxData[6]);
       id = rxData[11]; //12th char of rxData holds id number
+    //   tof = (((t4 - t1) & mask) - ((t3 - t2) & mask))/2;
       tof = (((t4 - t1) & mask) - (1+1.0E-6*decaduino.getLastRxSkew())*((t3 - t2) & mask))/2;
       if (abs(tof) < 1000) { //removes outliers, actual number will need to be changed
         if (id == 0) {
           distance1 = tof*RANGING_UNIT;
         }
         else {
-          distance2 = tof*RANGING_UNIT;
+          //distance is inaccurate, needs to be multiplied by a constant that gradually increases over distance
+          //first value is the base constant, second is how much it scales over distance
+          //got the numbers through guess and check over different distances across 2 meters 
+          distance2 = (tof*RANGING_UNIT)*(.67 + (tof*RANGING_UNIT*.075)); //.67 and .075
         }
 
         // Serial.print("\t");
@@ -172,13 +176,18 @@ void loop()
         // Serial.print("\t");
         // Serial.println(id);
         
-        //Refer to wikipedia article on trilateration for equation
+        // Refer to wikipedia article on trilateration for equation
         xc = ((distance1*distance1) - (distance2*distance2) + (xb*xb))/(2*xb); 
         yc = sqrt((distance2*distance2) - (xc - xc)); //actually +/-, defaulted to +, need to look at room to figure out which should be used
+        Serial.print("Distance 1: ");
+        Serial.print(distance1);
+        Serial.print("m\t");
+        Serial.print("Distance 2: ");
+        Serial.print(distance2);
+        Serial.print("m\t");
         Serial.print("X: ");
         Serial.print(xc);
-        Serial.print("m");
-        Serial.print("\t");
+        Serial.print("m\t");
         Serial.print("Y: ");
         Serial.print(yc);
         Serial.println("m");
