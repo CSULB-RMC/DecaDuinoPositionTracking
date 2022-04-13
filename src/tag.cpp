@@ -6,6 +6,10 @@
 // Dalcé, Thierry Val, "An Original Correction Method for Indoor Ultra Wide Band Ranging-based Localisation System"
 // https://arxiv.org/pdf/1603.06736.pdf
 
+#include "config.h"
+
+#ifdef TAG_MODE
+
 #include <SPI.h>
 #include <DecaDuino.h>
 #include <cmath>
@@ -202,3 +206,4 @@ void loop()
 }
 
 
+#endif

@@ -2,6 +2,9 @@
 // A simple implementation of the TWR protocol, server side
 // Contributors: Adrien van den Bossche, Réjane Dalcé, Ibrahim Fofana, Robert Try, Thierry Val
 // This sketch is a part of the DecaDuino Project - please refer to the DecaDuino LICENCE file for licensing details
+#include "config.h"
+#ifndef TAG_MODE
+
 
 #include <SPI.h>
 #include <DecaDuino.h>
@@ -120,4 +123,4 @@ void loop()
   }
 }
 
-
+#endif
