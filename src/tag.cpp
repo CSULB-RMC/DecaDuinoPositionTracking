@@ -71,7 +71,7 @@ void setup()
   xa = 0;
   ya = 0;
   //based on the equation, xa ya and yb might always have to be 0)
-  xb = .2;
+  xb = 1;
   yb = 0;
   distance1 = 0;
   distance2 = 0;
@@ -79,6 +79,7 @@ void setup()
 
 void loop()
 { 
+  //Serial.print(decaduino.getChannel());
   switch (state) {
    
     case TWR_ENGINE_STATE_INIT:
@@ -157,13 +158,15 @@ void loop()
       tof = (((t4 - t1) & mask) - (1+1.0E-6*decaduino.getLastRxSkew())*((t3 - t2) & mask))/2;
       if (abs(tof) < 1000) { //removes outliers, actual number will need to be changed
         if (id == 0) {
-          distance1 = tof*RANGING_UNIT;
+          distance1 = (tof*RANGING_UNIT)*(.84); //.84
         }
         else {
           //distance is inaccurate, needs to be multiplied by a constant that gradually increases over distance
           //first value is the base constant, second is how much it scales over distance
           //got the numbers through guess and check over different distances across 2 meters 
-          distance2 = (tof*RANGING_UNIT)*(.67 + (tof*RANGING_UNIT*.075)); //.67 and .075
+          distance2 = (tof*RANGING_UNIT)*(.89 + ((tof*RANGING_UNIT)*.01)); //.67 and .075
+          //might require different calibration for 0-2 and 2-5 meters
+          //distance2 = (tof*RANGING_UNIT);
         }
 
         // Serial.print("\t");
@@ -182,7 +185,7 @@ void loop()
         
         // Refer to wikipedia article on trilateration for equation
         xc = ((distance1*distance1) - (distance2*distance2) + (xb*xb))/(2*xb); 
-        yc = sqrt((distance2*distance2) - (xc - xc)); //actually +/-, defaulted to +, need to look at room to figure out which should be used
+        yc = sqrt((distance1*distance1) - (xc - xc)); //actually +/-, defaulted to +, need to look at room to figure out which should be used
         Serial.print("Distance 1: ");
         Serial.print(distance1);
         Serial.print("m\t");
