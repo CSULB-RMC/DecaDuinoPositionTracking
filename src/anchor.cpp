@@ -47,7 +47,10 @@ void setup()
     while(1) { digitalWrite(13, HIGH); delay(50); digitalWrite(13, LOW); delay(50); }
   }
   //while(1) { digitalWrite(13, HIGH); delay(50); digitalWrite(13, LOW); delay(50); }
-  decaduino.setChannel(7);
+
+  //need different channels so signals don't interfere 
+  //channel 1 for id 0, channel 7 for id 1 at the moment
+  decaduino.setChannel(1);
 
   // Set RX buffer
   decaduino.setRxBuffer(rxData, &rxLen);
@@ -106,7 +109,7 @@ void loop()
       txData[0] = TWR_MSG_TYPE_DATA_REPLY;
       decaduino.encodeUint40(t2, &txData[1]);
       decaduino.encodeUint40(t3, &txData[6]);
-      txData[11] = 1; //anchor id set here, change to 1 for other anchor
+      txData[11] = 0; //anchor id set here, change to 1 for other anchor
       decaduino.pdDataRequest(txData, 12);
       timeout = millis() + TIMEOUT_WAIT_DATA_REPLY_SENT;
       state = TWR_ENGINE_STATE_WAIT_DATA_REPLY_SENT;
