@@ -1238,6 +1238,20 @@ uint8_t DecaDuino::getTemperatureRaw() {
 	return u8t;
 }
 
+void DecaDuino::setOutputPower() {
+	uint32_t ui32t;
+	ui32t = 0x1F1F1F1F; //15 dB 
+	//ui32t = 0xA5A5A5A5; //2.5 dB
+	//ui32t = 0xE0E0E0E0;
+	writeSpiUint32(0x1E, ui32t);
+}
+
+void DecaDuino::setDataRate() {
+	uint8_t u8t;
+	u8t = 0x01; writeSpiSubAddress(0x27, 0x02, &u8t, 1); //pg 144
+	u8t = 0x20; writeSpiSubAddress(0x08, 0x01, &u8t, 1); //pg 74
+}
+
 
 uint8_t DecaDuino::getVoltageRaw() {
 

@@ -619,6 +619,11 @@ class DecaDuino {
 		* @date 20141115
 		* @todo To be implemented
 		*/
+
+		void setOutputPower();
+
+		void setDataRate();
+
 		float getTemperature(void);
 
 		/**

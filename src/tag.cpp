@@ -62,6 +62,10 @@ void setup()
     while(1) { digitalWrite(13, HIGH); delay(50); digitalWrite(13, LOW); delay(50); }
   }
 
+  decaduino.setOutputPower();
+  decaduino.setDataRate();
+  decaduino.setPreambleLength(2048);
+
   // Set RX buffer
   decaduino.setRxBuffer(rxData, &rxLen);
   state = TWR_ENGINE_STATE_INIT;
@@ -158,15 +162,30 @@ void loop()
       tof = (((t4 - t1) & mask) - (1+1.0E-6*decaduino.getLastRxSkew())*((t3 - t2) & mask))/2;
       if (abs(tof) < 1000) { //removes outliers, actual number will need to be changed
         if (id == 0) {
-          distance1 = (tof*RANGING_UNIT)*(.84); //.84
+          //distance1 = (tof*RANGING_UNIT)*(.84); //.84
+          distance1 = (tof*RANGING_UNIT);
+          if (distance1 > 1.5) {
+            distance1 -= .2;
+          }
+          else {
+            distance1 *= .9; //.84
+          }
         }
         else {
           //distance is inaccurate, needs to be multiplied by a constant that gradually increases over distance
           //first value is the base constant, second is how much it scales over distance
           //got the numbers through guess and check over different distances across 2 meters 
-          distance2 = (tof*RANGING_UNIT)*(.89 + ((tof*RANGING_UNIT)*.01)); //.67 and .075
+          // distance2 = (tof*RANGING_UNIT)*(.67 + ((tof*RANGING_UNIT)*.075)); //.67 and .075
           //might require different calibration for 0-2 and 2-5 meters
           //distance2 = (tof*RANGING_UNIT);
+
+          distance2 = (tof*RANGING_UNIT);
+          if (distance2 > 1.5) {
+            distance2 -= .2;
+          }
+          else {
+            distance2 *= .9; //.84
+          }
         }
 
         // Serial.print("\t");
