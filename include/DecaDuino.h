@@ -622,7 +622,7 @@ class DecaDuino {
 
 		void setOutputPower();
 
-		void setDataRate();
+		void setDataRate(uint8_t);
 
 		float getTemperature(void);
 

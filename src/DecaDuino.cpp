@@ -1239,6 +1239,7 @@ uint8_t DecaDuino::getTemperatureRaw() {
 }
 
 void DecaDuino::setOutputPower() {
+	uint8_t u8t;
 	uint32_t ui32t;
 	ui32t = 0x1F1F1F1F; //15 dB 
 	//ui32t = 0xA5A5A5A5; //2.5 dB
@@ -1246,10 +1247,32 @@ void DecaDuino::setOutputPower() {
 	writeSpiUint32(0x1E, ui32t);
 }
 
-void DecaDuino::setDataRate() {
+void DecaDuino::setDataRate(uint8_t rate) {
 	uint8_t u8t;
-	u8t = 0x01; writeSpiSubAddress(0x27, 0x02, &u8t, 1); //pg 144
-	u8t = 0x20; writeSpiSubAddress(0x08, 0x01, &u8t, 1); //pg 74
+	uint32_t u32t;
+	if (rate == 110) { //110 kbps
+		u8t = 0x0A; writeSpiSubAddress(0x27, 0x02, &u8t, 1); //pg 144, 0A for 110, 01 for 6.8 or 800
+		u8t = 0x00; writeSpiSubAddress(0x08, 0x01, &u8t, 1); //pg 74, transmit data rate, 40 for 6.8, 20 for 800, 0 for 110
+		u32t = 0x00401200; writeSpiUint32(0x04, u32t); //441200 for 110 with smart disabled, or 401200 for 110 with smart enabled, 1200 for default
+		u8t = 0x02; writeSpiSubAddress(0x10, 0x03, &u8t, 1); //RxPAC, not sure if this is needed, was probably 0 originally?
+		setPreambleLength(2048);
+	}
+	else if (rate == 800) { //800 kbps
+		u8t = 0x01; writeSpiSubAddress(0x27, 0x02, &u8t, 1); //pg 144, 0A for 110, 01 for 6.8 or 800
+		u8t = 0x20; writeSpiSubAddress(0x08, 0x01, &u8t, 1); //pg 74, transmit data rate, 40 for 6.8, 20 for 800, 0 for 110
+		u32t = 0x00001200; writeSpiUint32(0x04, u32t); //441200 for 110 with smart disabled, or 401200 for 110 with smart enabled, 1200 for default
+		u8t = 0x00; writeSpiSubAddress(0x10, 0x03, &u8t, 1); //RxPAC, not sure if this is needed, was probably 0 originally?
+		setPreambleLength(256);
+	}
+	else { //will default to 6.8 Mbps
+		u8t = 0x01; writeSpiSubAddress(0x27, 0x02, &u8t, 1); //pg 144, 0A for 110, 01 for 6.8 or 800
+		u8t = 0x40; writeSpiSubAddress(0x08, 0x01, &u8t, 1); //pg 74, transmit data rate, 40 for 6.8, 20 for 800, 0 for 110
+		u32t = 0x00001200; writeSpiUint32(0x04, u32t); //441200 for 110 with smart disabled, or 401200 for 110 with smart enabled, 1200 for default
+		u8t = 0x00; writeSpiSubAddress(0x10, 0x03, &u8t, 1); //RxPAC, not sure if this is needed, was probably 0 originally?
+		setPreambleLength(256);
+	}
+	//consider pg 147, 0x27
+	//consider pg 111, setting nonstandard SFD
 }
 
 

@@ -52,8 +52,7 @@ void setup()
   //channel 1 for id 0, channel 7 for id 1 at the moment
   decaduino.setChannel(1);
   decaduino.setOutputPower();
-  decaduino.setPreambleLength(2048);
-  decaduino.setDataRate();
+  decaduino.setDataRate(110);
 
   // Set RX buffer
   decaduino.setRxBuffer(rxData, &rxLen);

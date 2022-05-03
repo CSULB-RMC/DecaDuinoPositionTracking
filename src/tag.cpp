@@ -63,8 +63,7 @@ void setup()
   }
 
   decaduino.setOutputPower();
-  decaduino.setDataRate();
-  decaduino.setPreambleLength(2048);
+  decaduino.setDataRate(110);
 
   // Set RX buffer
   decaduino.setRxBuffer(rxData, &rxLen);
